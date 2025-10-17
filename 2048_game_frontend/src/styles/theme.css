@@ -1,0 +1,101 @@
+:root {
+  --primary: #2563EB;
+  --secondary: #F59E0B;
+  --success: #F59E0B;
+  --error: #EF4444;
+  --background: #f9fafb;
+  --surface: #ffffff;
+  --text: #111827;
+  --muted: #6b7280;
+  --shadow: 0 10px 25px rgba(0,0,0,0.08);
+  --radius: 16px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.badge {
+  background: linear-gradient(180deg, rgba(37,99,235,.15), rgba(37,99,235,.05));
+  border: 1px solid rgba(37,99,235,.3);
+  color: var(--primary);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-weight: 800;
+  letter-spacing: .5px;
+  box-shadow: var(--shadow);
+}
+.title {
+  margin: 0;
+  font-size: 28px;
+  letter-spacing: .2px;
+}
+.subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.scoreboard {
+  display: flex;
+  gap: 8px;
+}
+.score-card {
+  background: var(--surface);
+  border: 1px solid rgba(17,24,39,0.06);
+  border-radius: 14px;
+  padding: 8px 12px;
+  box-shadow: var(--shadow);
+  min-width: 90px;
+  text-align: center;
+}
+.score-card .label {
+  font-size: 12px;
+  color: var(--muted);
+}
+.score-card .value {
+  font-size: 20px;
+  font-weight: 800;
+}
+.score-card.best {
+  background: linear-gradient(180deg, rgba(245,158,11,0.12), rgba(245,158,11,0.06));
+  border: 1px solid rgba(245,158,11,0.35);
+}
+
+.controls {
+  margin-top: 12px;
+  display: grid;
+  place-items: center;
+  gap: 6px;
+}
+.controls .row {
+  display: flex;
+  gap: 6px;
+}
+
+.toast {
+  position: fixed;
+  bottom: 18px;
+  left: 50%;
+  transform: translateX(-50%) translateY(14px);
+  background: var(--surface);
+  border: 1px solid rgba(17,24,39,0.06);
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  transition: transform .2s ease, opacity .2s ease;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast.success { border-color: rgba(245,158,11,0.4); }
+.toast.error { border-color: rgba(239,68,68,0.4); }

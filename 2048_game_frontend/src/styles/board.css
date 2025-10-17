@@ -1,0 +1,73 @@
+.board {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  max-width: 560px;
+  margin: 0 auto;
+  position: relative;
+}
+
+.grid-bg {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 12px;
+  background: linear-gradient(180deg, rgba(17,24,39,0.06), rgba(17,24,39,0.04));
+  padding: 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(17,24,39,0.06);
+  box-shadow: var(--shadow);
+  width: 100%;
+  height: 100%;
+}
+
+.grid-cell {
+  background: rgba(17,24,39,0.04);
+  border-radius: 12px;
+}
+
+.tiles-layer {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 1fr;
+  gap: 12px;
+  padding: 12px;
+}
+
+.tile {
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: clamp(18px, 6vw, 28px);
+  user-select: none;
+  box-shadow: var(--shadow);
+  transition: background-color .2s ease, color .2s ease;
+}
+
+.tile .tile-number {
+  transform: translateZ(0);
+}
+
+/* Color schemes for values with Ocean accents */
+.t-2 { background: #e9efff; color: #1e3a8a; }
+.t-8 { background: #dce9ff; color: #1d4ed8; }
+.t-16 { background: #cfe0ff; color: #1e40af; }
+.t-32 { background: #fef3c7; color: #92400e; }
+.t-64 { background: #fde68a; color: #92400e; }
+.t-128 { background: #fcd34d; color: #78350f; }
+.t-256 { background: #fbbf24; color: #78350f; }
+.t-512 { background: #f59e0b; color: #78350f; }
+.t-1024 { background: #ef4444; color: #ffffff; }
+.t-2048 { background: #2563EB; color: #ffffff; }
+
+/* Spawn animation class added in component */
+@media (prefers-reduced-motion: no-preference) {
+  .tile.spawn { animation: tile-pop .16s ease-out; }
+}
+
+@keyframes tile-pop {
+  from { transform: scale(.6); opacity: .4; }
+  to { transform: scale(1); opacity: 1; }
+}
