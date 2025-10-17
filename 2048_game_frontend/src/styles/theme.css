@@ -1,0 +1,27 @@
+:root {
+  /* Ocean Professional Theme Tokens */
+  --color-primary: #2563EB;   /* Primary (Ocean Blue) */
+  --color-secondary: #F59E0B; /* Secondary/Success (Amber) */
+  --color-success: #F59E0B;   /* Alias for success */
+  --color-error: #EF4444;     /* Error */
+  --color-bg: #f9fafb;        /* App background */
+  --color-surface: #ffffff;   /* Cards/surfaces */
+  --color-text: #111827;      /* Main text */
+  --color-text-muted: #6b7280;/* Muted text */
+
+  /* Shadows and radii */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --shadow-lg: 0 10px 25px rgba(0,0,0,0.12);
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition: 250ms ease;
+
+  /* Gradient hint */
+  --gradient-top: linear-gradient(180deg, rgba(37, 99, 235, 0.08), rgba(249, 250, 251, 0));
+}
