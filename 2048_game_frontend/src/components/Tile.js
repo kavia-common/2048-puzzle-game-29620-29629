@@ -9,9 +9,9 @@ import React, { useMemo } from "react";
  * - value: number
  * - isNew: boolean (visual emphasis for newly spawned tile)
  */
-function Tile({ row, col, value, isNew }) {
+function Tile({ row, col, value, isNew, highContrast = false, animationsEnabled = true }) {
   const bg = useMemo(() => {
-    // Ocean/Amber palette ramp
+    // Ocean/Amber palette ramp (default)
     const palette = {
       2: "#DBEAFE",
       4: "#BFDBFE",
@@ -25,8 +25,23 @@ function Tile({ row, col, value, isNew }) {
       1024: "#F59E0B",
       2048: "#D97706",
     };
-    return palette[value] || "#1E3A8A";
-  }, [value]);
+    // High-contrast palette: stronger separation and WCAG-friendly ramps
+    const hc = {
+      2: "#ffffff",
+      4: "#d1d5db",
+      8: "#93c5fd",
+      16: "#60a5fa",
+      32: "#3b82f6",
+      64: "#1d4ed8",
+      128: "#dc2626",
+      256: "#b91c1c",
+      512: "#16a34a",
+      1024: "#15803d",
+      2048: "#0f766e",
+    };
+    const map = highContrast ? hc : palette;
+    return map[value] || (highContrast ? "#0a0a0a" : "#1E3A8A");
+  }, [value, highContrast]);
 
   const color = value <= 8 ? "#111827" : "#ffffff";
 
@@ -47,7 +62,7 @@ function Tile({ row, col, value, isNew }) {
       value >= 16 ? 22 : 24,
   };
 
-  const className = `tile${isNew ? " tile--new" : ""}`;
+  const className = `tile${isNew && animationsEnabled ? " tile--new" : ""}${!animationsEnabled ? " tile--no-anim" : ""}`;
 
   return (
     <div className={className} style={style} aria-label={`Tile ${value}`}>

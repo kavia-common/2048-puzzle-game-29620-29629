@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { DIRECTIONS, DEFAULT_SIZE, INITIAL_TILES, SPAWN_CHANCE_4, KEY_TO_DIRECTION, makeEmptyBoard, cloneBoard } from "../game/constants";
 import { move } from "../game/move";
 import { canMergeOrMove, getMaxTile, spawnRandomTile } from "../game/board";
-import { getBestScore, setBestScore, getLastState, setLastState, clearLastState } from "../game/storage";
+import { getBestScore, setBestScore, getLastState, setLastState, clearLastState, getPreferences, setPreferences } from "../game/storage";
 import Board from "./Board";
 import ScorePanel from "./ScorePanel";
 import Controls from "./Controls";
@@ -33,10 +33,12 @@ function Game() {
   const lastSpawnRef = useRef(null);
   const hasInitializedRef = useRef(false);
 
+  // Preferences
+  const [settings, setSettings] = useState(() => getPreferences());
   // Input debounce/animation lock to avoid overlapping moves
   const isAnimatingRef = useRef(false);
   // Estimated animation time (CSS movement + spawn pulse)
-  const ANIMATION_LOCK_MS = 180; // keep in sync with CSS vars
+  const ANIMATION_LOCK_MS = settings.animationsEnabled ? 180 : 0; // keep in sync with CSS vars
 
   // Initialize game: try to restore last state, else new game
   useEffect(() => {
@@ -55,6 +57,17 @@ function Game() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Persist preferences and trim history if undo depth shrinks
+  useEffect(() => {
+    setPreferences(settings);
+    setHistory((h) => {
+      const depth = Math.min(5, Math.max(1, Number(settings.undoDepth || 1)));
+      if (h.length <= depth) return h;
+      // Keep the most recent "depth" items
+      return h.slice(h.length - depth);
+    });
+  }, [settings]);
+
   // Persist best score
   useEffect(() => {
     if (score > best) {
@@ -70,13 +83,12 @@ function Game() {
 
   const pushHistory = useCallback((prevBoard, prevScore) => {
     setHistory((h) => {
-      const next = h.slice();
-      // Cap history size to keep memory reasonable
-      if (next.length >= 50) next.shift();
+      const depth = Math.min(5, Math.max(1, Number(settings.undoDepth || 1)));
+      const next = h.slice(-Math.max(0, depth - 1)); // keep last depth-1, then add new to make depth
       next.push({ board: prevBoard, score: prevScore });
       return next;
     });
-  }, []);
+  }, [settings.undoDepth]);
 
   // PUBLIC_INTERFACE
   const handleRestart = useCallback((clearSaved = true) => {
@@ -101,11 +113,15 @@ function Game() {
   }, []);
 
   const releaseLockSoon = useCallback(() => {
-    // Release move lock after estimated animation completes
+    // Release move lock after estimated animation completes; immediate if animations disabled
+    if (!settings.animationsEnabled) {
+      isAnimatingRef.current = false;
+      return;
+    }
     window.setTimeout(() => {
       isAnimatingRef.current = false;
     }, ANIMATION_LOCK_MS);
-  }, []);
+  }, [ANIMATION_LOCK_MS, settings.animationsEnabled]);
 
   const afterMoveHousekeeping = useCallback(
     (nextBoard, gained) => {
@@ -144,7 +160,7 @@ function Game() {
   const handleMove = useCallback(
     (direction) => {
       if (gameOver) return;
-      if (isAnimatingRef.current) return; // debounce during animation
+      if (settings.animationsEnabled && isAnimatingRef.current) return; // debounce during animation
       if (!Object.values(DIRECTIONS).includes(direction)) return;
 
       const prevBoard = cloneBoard(board);
@@ -156,8 +172,10 @@ function Game() {
         setStatusMessage("No tiles moved.");
         return; // no-op move
       }
-      // Engage lock until animations complete
-      isAnimatingRef.current = true;
+      // Engage lock until animations complete (if enabled)
+      if (settings.animationsEnabled) {
+        isAnimatingRef.current = true;
+      }
 
       // Save history for undo
       pushHistory(prevBoard, prevScore);
@@ -248,12 +266,18 @@ function Game() {
             gameOver={gameOver}
             gameWon={gameWon}
             maxTile={maxTile}
+            animationsEnabled={settings.animationsEnabled}
+            highContrast={settings.highContrastTiles}
           />
           <Controls
             onRestart={() => handleRestart()}
             onUndo={handleUndo}
             isUndoDisabled={history.length === 0}
-            isAnimating={isAnimatingRef.current}
+            isAnimating={settings.animationsEnabled ? isAnimatingRef.current : false}
+            settings={settings}
+            onChangeUndoDepth={(n) => setSettings((s) => ({ ...s, undoDepth: Math.min(5, Math.max(1, n)) }))}
+            onToggleAnimations={(enabled) => setSettings((s) => ({ ...s, animationsEnabled: !!enabled }))}
+            onToggleHighContrast={(enabled) => setSettings((s) => ({ ...s, highContrastTiles: !!enabled }))}
           />
         </section>
 

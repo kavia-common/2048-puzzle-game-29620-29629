@@ -6,6 +6,7 @@
 
 const BEST_SCORE_KEY = "2048_best_score";
 const LAST_STATE_KEY = "2048_last_state";
+const PREFS_KEY = "2048_prefs_v1";
 
 /**
  * PUBLIC_INTERFACE
@@ -96,4 +97,48 @@ export function setLastState(state) {
 export function clearLastState() {
   if (!isStorageAvailable()) return;
   window.localStorage.removeItem(LAST_STATE_KEY);
+}
+
+/**
+ * PUBLIC_INTERFACE
+ * getPreferences
+ * Reads persisted user preferences. Returns defaults if unavailable or invalid.
+ * @returns {{ undoDepth:number, animationsEnabled:boolean, highContrastTiles:boolean }}
+ */
+export function getPreferences() {
+  if (!isStorageAvailable()) {
+    return { undoDepth: 1, animationsEnabled: true, highContrastTiles: false };
+  }
+  const raw = window.localStorage.getItem(PREFS_KEY);
+  if (!raw) return { undoDepth: 1, animationsEnabled: true, highContrastTiles: false };
+  try {
+    const p = JSON.parse(raw);
+    const undoDepth = Math.min(5, Math.max(1, Number(p.undoDepth ?? 1)));
+    const animationsEnabled = Boolean(p.animationsEnabled ?? true);
+    const highContrastTiles = Boolean(p.highContrastTiles ?? false);
+    return { undoDepth, animationsEnabled, highContrastTiles };
+  } catch {
+    return { undoDepth: 1, animationsEnabled: true, highContrastTiles: false };
+  }
+}
+
+/**
+ * PUBLIC_INTERFACE
+ * setPreferences
+ * Persists user preferences. Accepts partial updates; merges with existing.
+ * @param {{ undoDepth?:number, animationsEnabled?:boolean, highContrastTiles?:boolean }} prefs
+ */
+export function setPreferences(prefs) {
+  if (!isStorageAvailable()) return;
+  const current = getPreferences();
+  const next = {
+    undoDepth: Math.min(5, Math.max(1, Number(prefs.undoDepth ?? current.undoDepth))),
+    animationsEnabled: typeof prefs.animationsEnabled === "boolean" ? prefs.animationsEnabled : current.animationsEnabled,
+    highContrastTiles: typeof prefs.highContrastTiles === "boolean" ? prefs.highContrastTiles : current.highContrastTiles,
+  };
+  try {
+    window.localStorage.setItem(PREFS_KEY, JSON.stringify(next));
+  } catch {
+    // ignore quota errors
+  }
 }

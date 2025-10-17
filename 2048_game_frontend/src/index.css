@@ -45,6 +45,14 @@ button[disabled] {
   opacity: 0.7;
 }
 
+/* Controls settings wrap responsiveness */
+@media (max-width: 480px) {
+  .controls .settings {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
 /* Only show focus ring for keyboard users */
 :focus:not(:focus-visible) {
   outline: none;

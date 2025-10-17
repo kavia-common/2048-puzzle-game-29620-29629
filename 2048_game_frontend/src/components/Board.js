@@ -13,7 +13,7 @@ import Tile from "./Tile";
  * - gameWon: boolean
  * - maxTile: number
  */
-const Board = forwardRef(function Board({ board, lastSpawn, gameOver, gameWon, maxTile }, ref) {
+const Board = forwardRef(function Board({ board, lastSpawn, gameOver, gameWon, maxTile, animationsEnabled = true, highContrast = false }, ref) {
   const size = board.length;
 
   const cells = useMemo(() => {
@@ -47,7 +47,7 @@ const Board = forwardRef(function Board({ board, lastSpawn, gameOver, gameWon, m
   }, [board, size, lastSpawn]);
 
   return (
-    <div className="board" ref={ref} role="application" aria-label="2048 board">
+    <div className={`board${highContrast ? " hc" : ""}`} ref={ref} role="application" aria-label="2048 board">
       {/* Background placeholder grid */}
       <div className="board-placeholder-grid" aria-hidden="true" style={{ position: "absolute", inset: 0 }}>
         {cells.map((c) => (
@@ -64,6 +64,8 @@ const Board = forwardRef(function Board({ board, lastSpawn, gameOver, gameWon, m
             col={t.col}
             value={t.value}
             isNew={t.isNew}
+            highContrast={highContrast}
+            animationsEnabled={animationsEnabled}
           />
         ))}
       </div>

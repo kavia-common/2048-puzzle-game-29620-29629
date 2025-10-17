@@ -123,6 +123,11 @@
   border-radius: 10px;
 }
 
+/* High-contrast board mode: stronger grid backdrop to increase separation */
+.board.hc .board-placeholder-cell {
+  background: rgba(17,24,39,0.12);
+}
+
 /* Tiles layer arranged absolutely; kept for screen readers via aria-live in component */
 .tiles-layer {
   pointer-events: none;
