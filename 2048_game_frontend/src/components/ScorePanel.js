@@ -11,13 +11,13 @@ import React from "react";
 function ScorePanel({ score, best }) {
   return (
     <div className="scores" role="group" aria-label="score summary">
-      <div className="card" aria-live="polite">
-        <div className="label">Score</div>
-        <div className="value">{score}</div>
+      <div className="card" aria-live="polite" aria-atomic="true">
+        <div className="label" id="score-label">Score</div>
+        <div className="value" aria-labelledby="score-label">{score}</div>
       </div>
-      <div className="card" aria-live="polite">
-        <div className="label">Best</div>
-        <div className="value">{best}</div>
+      <div className="card" aria-live="polite" aria-atomic="true">
+        <div className="label" id="best-label">Best</div>
+        <div className="value" aria-labelledby="best-label">{best}</div>
       </div>
     </div>
   );

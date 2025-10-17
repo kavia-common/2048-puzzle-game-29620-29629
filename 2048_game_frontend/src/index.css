@@ -28,8 +28,26 @@ a {
   text-decoration: none;
 }
 
+/* Base button font and focus behavior */
 button {
   font-family: inherit;
+}
+
+/* Ocean primary focus-visible style for all focusable controls */
+:focus-visible {
+  outline: 3px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* Improve contrast for disabled button text */
+button[disabled] {
+  opacity: 0.7;
+}
+
+/* Only show focus ring for keyboard users */
+:focus:not(:focus-visible) {
+  outline: none;
 }
 
 img {
