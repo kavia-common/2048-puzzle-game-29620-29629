@@ -1,18 +1,12 @@
-# 2048 Puzzle Game Workspace
+# 2048 Puzzle Game
 
-This workspace contains the React frontend for the 2048 game.
+This workspace hosts the React frontend for the 2048 game following the Ocean Professional theme.
 
-- Container: 2048_game_frontend (React, vanilla CSS)
-- Theme: Ocean Professional (blue/amber accents)
-
-Quick Start:
+Quick start:
 1) cd 2048_game_frontend
 2) npm install
 3) npm start
 
-Open http://localhost:3000 to see the base layout.
+Open http://localhost:3000 to play.
 
-Development notes:
-- Styling tokens in src/styles/theme.css
-- Base styles in src/index.css
-- App layout scaffold in src/App.js and src/App.css
+For details, see 2048_game_frontend/README.md.

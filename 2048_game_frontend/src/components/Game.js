@@ -242,10 +242,10 @@ function Game() {
       <main className="container">
         <header className="header">
           <div className="brand">
-            <h1 className="title">
+            <h1 className="title" data-testid="app-title" title="2048 Ocean">
               2048 <span className="title-accent">Ocean</span>
             </h1>
-            <span className="subtitle">Professional Edition</span>
+            <span className="subtitle" aria-label="edition">Professional Edition</span>
           </div>
           <ScorePanel score={score} best={best} />
         </header>
