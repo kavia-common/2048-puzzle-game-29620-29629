@@ -3,15 +3,15 @@ import React, { useMemo } from "react";
 /**
  * PUBLIC_INTERFACE
  * Tile
- * Positioned tile rendered within the Board's grid. Uses inline styles to blend with theme.
+ * Absolutely positioned tile rendered within the Board. Uses transforms for smooth movement.
  * Props:
  * - row, col: position in 0..3
  * - value: number
- * - isNew: boolean (optional visual emphasis for newly spawned tile)
+ * - isNew: boolean (visual emphasis for newly spawned tile)
  */
 function Tile({ row, col, value, isNew }) {
   const bg = useMemo(() => {
-    // Simple color ramp based on value; keep within Ocean/Amber scheme
+    // Ocean/Amber palette ramp
     const palette = {
       2: "#DBEAFE",
       4: "#BFDBFE",
@@ -25,32 +25,33 @@ function Tile({ row, col, value, isNew }) {
       1024: "#F59E0B",
       2048: "#D97706",
     };
-    // fallback: deeper blue
     return palette[value] || "#1E3A8A";
   }, [value]);
 
   const color = value <= 8 ? "#111827" : "#ffffff";
 
+  // Compute CSS variables from board for pixel-based positioning
+  // We rely on CSS vars defined on .board in App.css
+  const style = {
+    background: bg,
+    color,
+    width: "var(--tile-size)",
+    height: "var(--tile-size)",
+    // Translate by padding + col/row * (cell + gap)
+    transform: `translate(calc(var(--tile-padding) + ${col} * (var(--tile-size) + var(--tile-gap))), calc(var(--tile-padding) + ${row} * (var(--tile-size) + var(--tile-gap))))`,
+    fontSize:
+      value >= 2048 ? 18 :
+      value >= 1024 ? 18 :
+      value >= 512 ? 20 :
+      value >= 128 ? 20 :
+      value >= 16 ? 22 : 24,
+  };
+
+  const className = `tile${isNew ? " tile--new" : ""}`;
+
   return (
-    <div
-      className="tile"
-      style={{
-        gridColumnStart: col + 1,
-        gridRowStart: row + 1,
-        display: "grid",
-        placeItems: "center",
-        borderRadius: 10,
-        background: bg,
-        color,
-        fontWeight: 800,
-        fontSize: value >= 1024 ? 18 : value >= 128 ? 20 : value >= 16 ? 22 : 24,
-        boxShadow: "var(--shadow-md)",
-        transform: isNew ? "scale(1.05)" : "scale(1)",
-        transition: "transform 150ms ease",
-      }}
-      aria-label={`Tile ${value}`}
-    >
-      {value}
+    <div className={className} style={style} aria-label={`Tile ${value}`}>
+      <div className="tile__value">{value}</div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 /* Ocean Professional layout foundation and utilities */
+@import url('./styles/animations.css');
 
 .app-wrapper {
   min-height: 100vh;
@@ -36,6 +37,7 @@
 
 .title-accent {
   color: var(--color-primary);
+  text-shadow: 0 1px 0 rgba(255,255,255,0.4);
 }
 
 .subtitle {
@@ -72,25 +74,58 @@
   color: var(--color-text);
 }
 
-/* Board area placeholder */
+/* Board area */
 .board-wrap {
   display: grid;
   gap: 16px;
+  justify-items: center;
 }
 
+/* Responsive board sizing */
 .board {
-  width: 100%;
-  max-width: 560px;
+  /* Clamp keeps board responsive on mobile up to desktop */
+  width: min(92vw, 560px);
   aspect-ratio: 1 / 1;
   background: var(--color-surface);
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   border: 1px solid rgba(17,24,39,0.06);
   margin: 0 auto;
-  display: grid;
-  place-items: center;
   color: var(--color-text-muted);
   font-weight: 600;
+
+  /* CSS vars used by Tile for positioning */
+  --padding: 16px;
+  --gap: 10px;
+  --grid: 4;
+  --inner-size: calc(100% - (var(--padding) * 2));
+  --cell-size: calc((var(--inner-size) - ((var(--grid) - 1) * var(--gap))) / var(--grid));
+  --tile-size: var(--cell-size);
+  --tile-gap: var(--gap);
+  --tile-padding: var(--padding);
+  position: relative;
+}
+
+/* Background grid underlay */
+.board-placeholder-grid {
+  width: 100%;
+  height: 100%;
+  padding: var(--padding);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--gap);
+}
+
+.board-placeholder-cell {
+  width: 100%;
+  height: 100%;
+  background: rgba(17,24,39,0.04);
+  border-radius: 10px;
+}
+
+/* Tiles layer arranged absolutely; kept for screen readers via aria-live in component */
+.tiles-layer {
+  pointer-events: none;
 }
 
 /* Controls */
@@ -157,23 +192,4 @@
   .card {
     flex: 1;
   }
-}
-
-/* Board grid placeholder style for later */
-.board-placeholder-grid {
-  --gap: 10px;
-  --cell: calc((100% - (var(--gap) * 3)) / 4);
-  width: 100%;
-  height: 100%;
-  padding: 16px;
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--gap);
-}
-
-.board-placeholder-cell {
-  width: 100%;
-  height: 100%;
-  background: rgba(17,24,39,0.04);
-  border-radius: 10px;
 }

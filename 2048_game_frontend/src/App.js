@@ -1,5 +1,6 @@
 import React from 'react';
 import './App.css';
+import './styles/animations.css';
 import Game from './components/Game';
 
 /**
