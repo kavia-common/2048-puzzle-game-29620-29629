@@ -3,6 +3,7 @@ import React, { useMemo } from 'react';
 /**
  * PUBLIC_INTERFACE
  * Tile renders a single tile at its grid coordinates with animated movement and merging feedback.
+ * Uses CSS Grid placement to align perfectly with board cells.
  * @param {{tile: {id:string, value:number, row:number, col:number, merging?:boolean, new?:boolean}}} props
  */
 export default function Tile({ tile }) {
@@ -25,12 +26,12 @@ export default function Tile({ tile }) {
     return map[value] || { bg: '#334155', fg: 'white' };
   }, [value]);
 
+  // Place the tile directly in the grid cell; board's gap/padding handle spacing.
   const style = {
-    position: 'absolute',
-    top: `calc(${row} * (25% + var(--gap)) + 12px)`,
-    left: `calc(${col} * (25% + var(--gap)) + 12px)`,
-    width: `calc(25% - var(--gap))`,
-    height: `calc(25% - var(--gap))`,
+    gridColumn: col + 1,
+    gridRow: row + 1,
+    width: '100%',
+    height: '100%',
     borderRadius: 10,
     display: 'grid',
     placeItems: 'center',
@@ -38,7 +39,8 @@ export default function Tile({ tile }) {
     fontSize: value >= 1024 ? 18 : value >= 128 ? 20 : value >= 16 ? 24 : 28,
     color: colors.fg,
     background: colors.bg,
-    transform: 'translateZ(0)', /* create layer for smoother movement */
+    // Keep a layer for smoother animations; avoid positional transforms to prevent drift.
+    transform: 'translateZ(0)',
   };
 
   const classes = ['tile'];

@@ -162,6 +162,23 @@ body {
   padding-top: 100%;
 }
 
+/* Foreground tiles placed as grid items to perfectly align with cells */
+.tile {
+  /* board is a grid; each tile occupies one grid cell */
+  width: 100%;
+  height: 100%;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  /* Ensure tiles render above background cells */
+  z-index: 1;
+  /* Prevent pointer interference with gestures on board */
+  pointer-events: none;
+}
+
 /* Responsive layout */
 @media (max-width: 680px) {
   .header {
