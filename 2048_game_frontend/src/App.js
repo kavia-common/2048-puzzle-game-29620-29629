@@ -88,7 +88,8 @@ function App() {
         </div>
       </main>
 
-      <div className="sr-only" aria-live="polite" aria-atomic="true">
+      {/* Accessibility live region for announcements */}
+      <div className="sr-only" aria-live="assertive" aria-atomic="true">
         {announce}
       </div>
 

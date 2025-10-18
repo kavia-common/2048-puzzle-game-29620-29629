@@ -171,6 +171,9 @@ body {
   gap: var(--gap);
   position: relative;
   overflow: hidden; /* avoid overflow artifacts during animations */
+
+  /* Ensure overlay properly stacks above children */
+  isolation: isolate;
 }
 
 /* Background cells are placed by the board grid. Use 1:1 intrinsic ratio via grid sizing. */

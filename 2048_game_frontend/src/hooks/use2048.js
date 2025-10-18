@@ -51,13 +51,24 @@ export function use2048() {
       if (nextCells[r][c]?.value === 2048) win = true;
     }
     setHasWon(win);
-    // game over
+    // game over (no moves possible)
     const over = !canMove(nextCells);
     setIsGameOver(over);
-    // announce
-    if (win) setAnnounce('You reached 2048! You win!');
-    else if (over) setAnnounce('No more moves. Game over.');
-    else setAnnounce('');
+    // announce state changes using assertive region
+    if (win) {
+      setAnnounce('You reached 2048! You win!');
+    } else if (over) {
+      setAnnounce('No more moves. Game over.');
+      // focus the board so screen readers will be in context; overlay captures interactions
+      if (boardRef.current) {
+        // slight timeout ensures overlay renders before focus shift
+        setTimeout(() => {
+          try { boardRef.current.focus(); } catch {}
+        }, 0);
+      }
+    } else {
+      setAnnounce('');
+    }
     // best
     updateBest(nextScore);
   }, [hasWon, updateBest]);
@@ -65,21 +76,34 @@ export function use2048() {
   const move = useCallback((direction) => {
     if (isGameOver || hasWon) return;
     setCells(prev => {
+      // If already over, do nothing
+      if (!canMove(prev)) {
+        setIsGameOver(true);
+        setAnnounce('No more moves. Game over.');
+        return prev;
+      }
       const snapshot = { cells: cloneCells(prev), score };
       prevStateRef.current = snapshot;
       const { cells: movedCells, moved, scoreGain } = moveGrid(prev, direction);
       if (!moved) {
         prevStateRef.current = null; // no undo for no-op
+        // even if not moved, verify game over state
+        const overNow = !canMove(prev);
+        if (overNow) {
+          setIsGameOver(true);
+          setAnnounce('No more moves. Game over.');
+        }
         return prev;
       }
       const after = cloneCells(movedCells);
+      // Spawn only if there is at least one empty cell
       spawnRandomTile(after);
-      const nextScore = score + scoreGain;
+      const nextScore = (snapshot.score ?? 0) + scoreGain;
       setScore(nextScore);
       postMoveChecks(after, nextScore);
       return after;
     });
-  }, [score, isGameOver, hasWon, postMoveChecks]);
+  }, [isGameOver, hasWon, postMoveChecks, score]);
 
   const reset = useCallback(() => {
     const fresh = createEmptyGrid();
@@ -89,9 +113,14 @@ export function use2048() {
     setScore(0);
     setHasWon(false);
     setIsGameOver(false);
+    // Clear announcements so screen readers don't re-announce stale messages
     setAnnounce('Game restarted.');
     prevStateRef.current = null;
-    if (boardRef.current) boardRef.current.focus();
+    if (boardRef.current) {
+      setTimeout(() => {
+        try { boardRef.current.focus(); } catch {}
+      }, 0);
+    }
   }, []);
 
   const undo = useCallback(() => {

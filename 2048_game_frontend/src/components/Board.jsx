@@ -107,8 +107,14 @@ export default function Board({ grid, onMove, hasWon, isGameOver, setBoardRef })
         ))}
 
         {(hasWon || isGameOver) && (
-          <div className="overlay" role="dialog" aria-live="polite" aria-label={hasWon ? 'You win!' : 'Game over'}>
-            <div className="overlay-card">
+          <div
+            className="overlay"
+            role="dialog"
+            aria-modal="true"
+            aria-live="assertive"
+            aria-label={hasWon ? 'You win!' : 'Game over'}
+          >
+            <div className="overlay-card" tabIndex={-1}>
               <div className="overlay-title">{hasWon ? 'You win! 🎉' : 'Game Over 💥'}</div>
               <div className="overlay-subtitle">Press Restart to play again</div>
             </div>
@@ -120,25 +126,31 @@ export default function Board({ grid, onMove, hasWon, isGameOver, setBoardRef })
         .overlay {
           position: absolute;
           inset: 0;
-          background: rgba(0,0,0,0.35);
+          background: rgba(0,0,0,0.45);
           backdrop-filter: blur(2px);
           display: grid;
           place-items: center;
           border-radius: 12px;
+          z-index: 5;
+          pointer-events: all; /* block interactions behind overlay */
+        }
+        .board .tile {
+          z-index: 1;
         }
         .overlay-card {
           background: var(--surface);
           color: var(--text);
           border: 1px solid rgba(0,0,0,0.08);
           box-shadow: var(--shadow);
-          padding: 16px 20px;
+          padding: 20px 24px;
           border-radius: 12px;
           text-align: center;
+          max-width: 80%;
         }
         .overlay-title {
-          font-size: 22px;
+          font-size: 24px;
           font-weight: 800;
-          margin-bottom: 6px;
+          margin-bottom: 8px;
           color: var(--primary);
         }
         .overlay-subtitle {
