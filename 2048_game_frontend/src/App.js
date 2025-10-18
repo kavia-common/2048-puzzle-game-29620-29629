@@ -9,6 +9,7 @@ import { use2048 } from './hooks/use2048';
 /**
  * PUBLIC_INTERFACE
  * App is the main entry for the 2048 game UI. It wires the board, score, controls, and accessibility.
+ * Keyboard: The Board listens globally for Arrow/WASD, and the App region remains focusable for screen readers.
  */
 function App() {
   const {

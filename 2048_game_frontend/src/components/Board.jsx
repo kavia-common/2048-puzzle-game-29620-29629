@@ -4,6 +4,9 @@ import Tile from './Tile';
 /**
  * PUBLIC_INTERFACE
  * Board renders the 4x4 grid and all tiles. It also wires input handlers (keyboard and touch).
+ * - Keyboard: Arrow keys and WASD are supported. We listen on window to avoid focus traps and
+ *   call preventDefault() to stop page scrolling when handling arrows.
+ * - Touch: Swipe gestures move tiles.
  * @param {{grid: import('../hooks/use2048').GridState, onMove: Function, hasWon: boolean, isGameOver: boolean, setBoardRef: Function}} props
  */
 export default function Board({ grid, onMove, hasWon, isGameOver, setBoardRef }) {
@@ -13,20 +16,51 @@ export default function Board({ grid, onMove, hasWon, isGameOver, setBoardRef })
   useEffect(() => {
     if (boardRef.current) {
       setBoardRef(boardRef.current);
+      // Proactively focus the board to make it keyboard accessible when mounted
+      // This helps screen reader and ensures immediate key interactions.
+      boardRef.current.focus();
     }
   }, [setBoardRef]);
 
   useEffect(() => {
-    const handleKey = (e) => {
-      const key = e.key.toLowerCase();
-      if (['arrowup', 'w'].includes(key)) { e.preventDefault(); onMove('up'); }
-      else if (['arrowdown', 's'].includes(key)) { e.preventDefault(); onMove('down'); }
-      else if (['arrowleft', 'a'].includes(key)) { e.preventDefault(); onMove('left'); }
-      else if (['arrowright', 'd'].includes(key)) { e.preventDefault(); onMove('right'); }
+    // Map keys to directions using standardized KeyboardEvent.key values.
+    const keyToDir = (key) => {
+      switch (key) {
+        case 'ArrowUp':
+        case 'w':
+        case 'W':
+          return 'up';
+        case 'ArrowDown':
+        case 's':
+        case 'S':
+          return 'down';
+        case 'ArrowLeft':
+        case 'a':
+        case 'A':
+          return 'left';
+        case 'ArrowRight':
+        case 'd':
+        case 'D':
+          return 'right';
+        default:
+          return null;
+      }
     };
-    const node = boardRef.current;
-    node && node.addEventListener('keydown', handleKey);
-    return () => node && node.removeEventListener('keydown', handleKey);
+
+    const handleKeyDown = (e) => {
+      const dir = keyToDir(e.key);
+      if (!dir) return;
+      // Prevent browser from scrolling the page on arrow keys
+      e.preventDefault();
+      onMove(dir);
+    };
+
+    // Attach to window to ensure reliability even if focus leaves the board temporarily.
+    window.addEventListener('keydown', handleKeyDown, { passive: false });
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown, { passive: false });
+    };
   }, [onMove]);
 
   const onTouchStart = (e) => {
@@ -56,6 +90,7 @@ export default function Board({ grid, onMove, hasWon, isGameOver, setBoardRef })
         aria-label="2048 grid"
         aria-rowcount={4}
         aria-colcount={4}
+        // Keep focusable to support keyboard and accessibility
         tabIndex={0}
         ref={boardRef}
         onTouchStart={onTouchStart}

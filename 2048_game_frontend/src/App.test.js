@@ -12,9 +12,12 @@ test('renders grid and allows keyboard moves', () => {
   render(<App />);
   const grid = screen.getByRole('grid', { name: /2048 grid/i });
   expect(grid).toBeInTheDocument();
-  // simulate a move (no assertion on result, just ensure no crash)
+  // simulate moves on the grid element
   fireEvent.keyDown(grid, { key: 'ArrowLeft' });
   fireEvent.keyDown(grid, { key: 'ArrowUp' });
+  // also ensure global listener works without explicit focus
+  fireEvent.keyDown(document, { key: 'ArrowRight' });
+  fireEvent.keyDown(window, { key: 'ArrowDown' });
 });
 
 test('has restart and undo controls', () => {
