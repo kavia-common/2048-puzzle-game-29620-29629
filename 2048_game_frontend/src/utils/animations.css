@@ -1,0 +1,30 @@
+@media (prefers-reduced-motion: no-preference) {
+  .tile-enter {
+    animation: pop-in 150ms ease-out;
+  }
+  .tile-merge {
+    animation: merge-pop 120ms ease-out;
+  }
+  .tile-move {
+    transition: transform 120ms ease;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tile-enter,
+  .tile-merge,
+  .tile-move {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+@keyframes pop-in {
+  0% { transform: scale(0.6); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes merge-pop {
+  0% { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
