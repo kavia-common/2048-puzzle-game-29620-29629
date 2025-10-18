@@ -36,10 +36,9 @@ export default function Tile({ tile }) {
     display: 'grid',
     placeItems: 'center',
     fontWeight: 800,
-    fontSize: value >= 1024 ? 18 : value >= 128 ? 20 : value >= 16 ? 24 : 28,
     color: colors.fg,
     background: colors.bg,
-    // Keep a layer for smoother animations; avoid positional transforms to prevent drift.
+    /* Keep a layer for smoother animations; avoid positional transforms to prevent drift. */
     transform: 'translateZ(0)',
   };
 

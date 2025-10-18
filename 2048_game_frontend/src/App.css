@@ -9,10 +9,20 @@
   --muted: #6b7280;
   --shadow: 0 10px 25px rgba(0,0,0,0.08);
   --radius: 16px;
-  --gap: 12px;
+
+  /* Board spacing and responsive sizing */
+  --gap: 10px; /* enforce a consistent fixed gap */
+  --board-min: 260px;
+  --board-ideal: 70vmin; /* scales uniformly with viewport */
+  --board-max: 560px;
 
   --tile-empty: #e5e7eb;
   --board-bg: linear-gradient(180deg, rgba(37,99,235,0.08), rgba(17,24,39,0.03));
+
+  /* Typography scales with board via clamp. Tiles can reference this. */
+  --tile-font-min: 14px;
+  --tile-font-ideal: 3.6vmin;
+  --tile-font-max: 28px;
 }
 
 [data-theme="dark"] {
@@ -141,25 +151,36 @@ body {
   padding: 16px;
   border-radius: var(--radius);
   box-shadow: var(--shadow);
+  /* center the board */
+  display: grid;
+  justify-items: center;
 }
 
 .board {
   background: var(--surface);
   border-radius: calc(var(--radius) - 8px);
+  /* internal padding should not affect grid math beyond consistent spacing */
   padding: 12px;
+  /* enforce square board that scales uniformly with viewport constraints */
+  width: clamp(var(--board-min), var(--board-ideal), var(--board-max));
   aspect-ratio: 1 / 1;
+
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-template-rows: repeat(4, 1fr);
   gap: var(--gap);
   position: relative;
+  overflow: hidden; /* avoid overflow artifacts during animations */
 }
 
+/* Background cells are placed by the board grid. Use 1:1 intrinsic ratio via grid sizing. */
 .board .cell {
   background: var(--tile-empty);
   border-radius: 10px;
+  /* grid items fill their track; no percentage calc + gap math */
   width: 100%;
+  height: 100%;
   position: relative;
-  padding-top: 100%;
 }
 
 /* Foreground tiles placed as grid items to perfectly align with cells */
@@ -177,6 +198,10 @@ body {
   z-index: 1;
   /* Prevent pointer interference with gestures on board */
   pointer-events: none;
+
+  /* Typography scales with container while clamped to readable range */
+  font-size: clamp(var(--tile-font-min), var(--tile-font-ideal), var(--tile-font-max));
+  line-height: 1;
 }
 
 /* Responsive layout */

@@ -1,12 +1,15 @@
 @media (prefers-reduced-motion: no-preference) {
   .tile-enter {
     animation: pop-in 150ms ease-out;
+    will-change: transform, opacity;
   }
   .tile-merge {
     animation: merge-pop 120ms ease-out;
+    will-change: transform;
   }
   .tile-move {
     transition: transform 120ms ease;
+    will-change: transform;
   }
 }
 
