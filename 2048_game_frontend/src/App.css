@@ -161,6 +161,7 @@
   position: absolute;
   inset: 10px;
   border-radius: 12px;
+  pointer-events: none; /* allow swipes to register on board */
 }
 
 .tile {

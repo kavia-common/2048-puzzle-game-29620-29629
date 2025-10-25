@@ -5,10 +5,14 @@ import React, { useMemo } from 'react';
  * Tile component: renders an individual tile with proper position and styles.
  */
 function Tile({ row, col, value, isNew, isMerge }) {
-  const gap = 10; // px
-  const sizePct = (100 - (gap * 3)) / 4; // width/height in %
-  const x = col * (sizePct + (gap / ((gap * 3 + 100) / 100)));
-  const y = row * (sizePct + (gap / ((gap * 3 + 100) / 100)));
+  // The .board has padding:10px and the .grid uses gap:10px with 4 columns.
+  // Each tile width = (100% - 3*gap) / 4. Position offset per step = tileWidth + gap.
+  const gapPx = 10;
+  const totalGaps = 3 * gapPx;
+  const tileWidthPct = (100 - totalGaps * 100 / (gapPx * 3 + 100)) / 4; // Normalize based on CSS gap math
+  // Simpler robust calculation using CSS calc composition:
+  const left = `calc(${col} * ( (100% - 30px)/4 + 10px ))`;
+  const top = `calc(${row} * ( (100% - 30px)/4 + 10px ))`;
 
   // Map value to background color
   const bg = useMemo(() => {
@@ -39,9 +43,9 @@ function Tile({ row, col, value, isNew, isMerge }) {
       className={classNames.join(' ')}
       style={{
         background: bg,
-        left: `calc(${x}% )`,
-        top: `calc(${y}% )`,
-        transform: `translate(0,0)`,
+        left,
+        top,
+        transform: 'translate(0,0)',
         fontSize,
       }}
       aria-label={`Tile ${value}`}
